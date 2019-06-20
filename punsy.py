@@ -2,25 +2,12 @@
 
 import random
 import sys
+from nltk.corpus.reader import cmudict
 
-sentence = sys.argv[1]
+def run(ifpath):
+    with open(ifpath, 'r') as istream:
+        parsed = cmudict.read_cmudict_block(istream)
+    print(parsed)
 
-words = {
-    'ahn': ['naan', 'none', 'nun']
-}
-
-def pattern_for_word(word, words):
-    for pattern, matches in words.items():
-        if any(el == word for el in matches):
-            return pattern
-
-pun = []
-for word in sentence.split(' '):
-    pattern = pattern_for_word(word, words)
-    if pattern:
-        pun.append(random.choice(words[pattern]))
-    else:
-        pun.append(word)
-print(' '.join(pun))
-
-        
+if __name__ == '__main__':
+    run(sys.argv[1])
