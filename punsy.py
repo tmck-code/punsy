@@ -7,7 +7,8 @@ from nltk.corpus.reader import cmudict
 def run(ifpath):
     with open(ifpath, 'r') as istream:
         parsed = cmudict.read_cmudict_block(istream)
-    print(parsed)
+    for word, phonemes in parsed:
+        print(word, phonemes)
 
 if __name__ == '__main__':
     run(sys.argv[1])
