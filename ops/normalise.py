@@ -15,7 +15,7 @@ def parse_cmu(istream):
 def run(ifpath):
     with open(ifpath, 'rb') as istream, open(ifpath + '.utf8', 'w') as ostream:
         for i, word, phonemes in parse_cmu(istream):
-            print(i, word, phonemes)
+            print(i, word, phonemes.split(' '))
             ostream.write('|'.join([word, phonemes]) + '\n')
 
 if __name__ == '__main__':
