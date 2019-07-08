@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 '''
 A python implementation of the Trie data structure.
 
@@ -22,6 +21,10 @@ t.insert('cat')                   # insert a word into the trie
 t['cat'],       t.get('cat')      # retrieve a node from the trie
 t,              print(t)          # print the contents of the trie
 '''
+
+from punsy import log
+
+LOG = log.get_logger('trie')
 
 class Trie(object):
     '''
@@ -50,7 +53,7 @@ class Trie(object):
 
         try:
             # Recurse down
-            self.children[string[0]].insert(string)
+            self.children[string[0]].insert(string, data)
         except KeyError:
             # Create a new node if one doesn't exist
             n = Trie()
@@ -60,9 +63,10 @@ class Trie(object):
         except IndexError:
             self.final = True
             self.data = data
+            LOG.debug(f'Inserted {self.value} -> {self.data}')
 
     def __repr__(self):
-        return f'{self.value} -> {self.children}'
+        return f'{self.value} ({self.data}) -> {self.children}'
 
     def __contains__(self, value):
         try:
