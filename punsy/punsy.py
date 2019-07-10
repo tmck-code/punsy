@@ -5,12 +5,22 @@ from structs.trie import Trie
 import json
 
 from tqdm import tqdm
+import log
+
+LOG = log.get_logger('punsy')
+
+def run(ifpath):
+    nlines = __file_len(ifpath)
+    with open(ifpath, 'rb') as istream:
+        t, mapping = parse_cmu_file(istream, nlines)
+    return t, mapping
 
 def parse_cmu(istream):
     for i, line in enumerate(istream):
         try:
-            yield [i, *line.decode('ISO-8859-1').strip().split('|')]
+            yield [i, *line.decode('utf8').strip().split('|')]
         except UnicodeDecodeError as e:
+            LOG.warning(line)
             raise e
 
 def parse_cmu_file(istream, nlines):
@@ -22,12 +32,6 @@ def parse_cmu_file(istream, nlines):
             t.insert(''.join(phoneme_seq), word)
             mapping[word] = phoneme_seq
             pbar.update(1)
-    return t, mapping
-
-def run(ifpath):
-    nlines = __file_len(ifpath)
-    with open(ifpath, 'rb') as istream:
-        t, mapping = parse_cmu_file(istream, nlines)
     return t, mapping
 
 def __file_len(fpath):
