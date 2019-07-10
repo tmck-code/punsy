@@ -2,23 +2,41 @@
 
 import sys
 from structs.trie import Trie
+import json
+
+from tqdm import tqdm
 
 def parse_cmu(istream):
     for i, line in enumerate(istream):
         try:
             yield [i, *line.decode('ISO-8859-1').strip().split('|')]
         except UnicodeDecodeError as e:
-            print(line)
             raise e
 
-def run(ifpath):
+def parse_cmu_file(istream, nlines):
     t = Trie()
-    with open(ifpath, 'rb') as istream:
+    mapping = {}
+    with tqdm(total=nlines) as pbar:
         for i, word, phonemes in parse_cmu(istream):
-            print(i, word, phonemes.split(' '))
-            t.insert(''.join(phonemes.split(' ')), word)
-    return t
+            phoneme_seq = phonemes.split(' ')
+            t.insert(''.join(phoneme_seq), word)
+            mapping[word] = phoneme_seq
+            pbar.update(1)
+    return t, mapping
 
+def run(ifpath):
+    nlines = __file_len(ifpath)
+    with open(ifpath, 'rb') as istream:
+        t, mapping = parse_cmu_file(istream, nlines)
+    return t, mapping
+
+def __file_len(fpath):
+    with open(fpath) as istream:
+        for i, _ in enumerate(istream):
+            pass
+    return i + 1
 
 if __name__ == '__main__':
-    run(sys.argv[1])
+    sentence = '! searched for god, but found none'
+    t, mapping = run(sys.argv[1])
+
