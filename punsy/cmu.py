@@ -21,9 +21,10 @@ class CMU:
     def run(self):
         with open(self.fpath, 'rb') as istream:
             with tqdm.tqdm(total=self.n_lines) as pbar:
-                for i, word, phonemes in CMU.parse(istream):
+                for _, word, phonemes in CMU.parse(istream):
                     phonemes = phonemes.split(' ')
                     self.trie.insert(phonemes, word)
+                    LOG.info(f'inserted {phonemes}, {word}')
                     self.mapping[word] = phonemes
                     pbar.update(1)
 
@@ -36,14 +37,14 @@ class CMU:
                 LOG.info(line)
                 raise e
 
-    def phonemes(word):
+    def phonemes(self, word):
         try:
             return self.mapping[word]
         except KeyError:
             LOG.info(f'No phonemes found for {word}')
             return None
 
-    def exact_rhymes(phonemes):
+    def exact_rhymes(self, phonemes):
         return self.trie[phonemes]
 
     @staticmethod
@@ -62,6 +63,6 @@ if __name__ == '__main__':
     cmu = CMU(sys.argv[1])
     cmu.run()
     ph = cmu.phonemes('NONE')
-    LOG.info('NONE', ph)
+    print('NONE', ph)
     rh = cmu.exact_rhymes(ph)
     print(rh)
