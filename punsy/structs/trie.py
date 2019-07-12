@@ -32,8 +32,8 @@ class Trie(object):
     Currently with ZERO dependencies.
     '''
 
-    def __init__(self, value=None, data=None):
-        self.value = value
+    def __init__(self, value=[], data=None):
+        self.value = set(value)
         self.children = dict()
         self.final = False
         self.data = data
@@ -49,7 +49,7 @@ class Trie(object):
 
     def insert(self, word, data=None):
         value, *string = word
-        self.value = value
+        self.value.add(value)
 
         try:
             # Recurse down
@@ -63,7 +63,7 @@ class Trie(object):
         except IndexError:
             self.final = True
             self.data = data
-            LOG.info(f'Inserted {self.value} -> {self.data}')
+            LOG.debug(f'Assigning data -> {data}')
 
     def __repr__(self):
         return f'{self.value} ({self.data}) -> {self.children}'
@@ -77,9 +77,10 @@ class Trie(object):
     def __getitem__(self, word):
         curr, *remain = word
 
-        if curr != self.value:
+        if curr not in self.value:
+            LOG.warn(f'{self.value}, {self.children.keys()}')
             raise KeyError
-        elif remain:
+        if remain:
             return self.children[remain[0]].__getitem__(remain)
         return self
 

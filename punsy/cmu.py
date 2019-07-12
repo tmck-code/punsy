@@ -45,7 +45,7 @@ class CMU:
             return None
 
     def exact_rhymes(self, phonemes):
-        return self.trie[phonemes]
+        return self.phonemes[phonemes]
 
     @staticmethod
     def __count_lines(fpath):
