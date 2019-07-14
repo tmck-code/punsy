@@ -39,8 +39,8 @@ class TestTrie(unittest.TestCase):
         self.assertTrue(result.children['b'].final)
         self.assertTrue(result.children['r'].final)
         # h should contain 'catinthehat'
-        # self.assertFalse(result.children['h'].final)
-        # print(result.children['h']['e']['h'])
+        self.assertFalse(result.children['h'].final)
+        self.assertTrue(struct['catinthehat'].final)
 
     def testInsert(self):
         self.assertEqual({'NONE', 'NAAN'}, self.trie['N', 'AH1', 'N'].data)
