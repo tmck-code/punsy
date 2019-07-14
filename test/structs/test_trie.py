@@ -12,7 +12,8 @@ class TestTrie(unittest.TestCase):
         self.words = {
             'NONE': ['N', 'AH1', 'N'],
             'ONCE': ['W', 'AH1', 'N', 'S'],
-            'NAAN': ['N', 'AH1', 'N']
+            'NAAN': ['N', 'AH1', 'N'],
+            'PUN': ['P', 'AH1', 'N'],
         }
         self.trie = Trie()
         for word, pronunciation in self.words.items():
@@ -21,9 +22,11 @@ class TestTrie(unittest.TestCase):
     def testInsert(self):
         self.assertEqual({'NONE', 'NAAN'}, self.trie['N', 'AH1', 'N'].data)
         self.assertEqual({'ONCE'}, self.trie['W', 'AH1', 'N', 'S'].data)
+        self.assertEqual({'PUN'}, self.trie['P', 'AH1', 'N'].data)
 
     def testGetItem(self):
         trie = Trie()
         trie.insert('A', 123)
-        self.assertEqual(trie, trie['A'])
+        print(trie['A'])
+        self.assertEqual(123, trie['A'].value)
 
