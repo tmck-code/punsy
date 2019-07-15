@@ -26,6 +26,18 @@ from punsy import log
 
 LOG = log.get_logger('trie')
 
+class SuffixTrie:
+
+    @staticmethod
+    def collect_child_data(node):
+        results = []
+        for key, child in node.children.items():
+            if not child.final:
+                return SuffixTrie.collect_child_data(child)
+            else:
+                results.append(child.value)
+        return results
+
 class Trie(object):
     '''
     A Trie class which implements insert, contains, and has_prefix methods.
@@ -56,13 +68,7 @@ class Trie(object):
         if self.key_reversed:
             word = list(reversed(word))
         LOG.debug(f'Adding to Trie: {word} -> {data}')
-        try:
-            self.children[word[0]]._insert(word, data)
-        except KeyError:
-            # Create a new node if one doesn't exist
-            n = Trie()
-            self.children[word[0]] = n
-            n._insert(word, data)
+        self._insert(word, data)
 
     def _insert(self, word, data=None):
         value, *string = word
@@ -95,16 +101,17 @@ class Trie(object):
     def __getitem__(self, word):
         if self.key_reversed:
             word = list(reversed(word))
-        if word[0] in self.children.keys():
-            return self.children[word[0]]._getitem(word)
+        return self._getitem(word)
 
     def _getitem(self, word):
+        print(word)
         curr, *remain = word
 
         if curr not in self.value:
             LOG.warn(f'{self.value}, {self.children.keys()}')
             raise KeyError
         if remain:
+            print(remain, self.children)
             return self.children[remain[0]]._getitem(remain)
         return self
 
