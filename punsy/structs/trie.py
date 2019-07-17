@@ -51,23 +51,16 @@ class Trie(object):
         self.data = set(data)
         self.key_reversed = key_reversed
 
-    def contains(self, word):
-        return self.__contains__(word)
-
-    @property
-    def _children(self):
-        return list(self.children.keys())
-
-    def has_prefix(self, word):
+    def has_suffix(self, word):
         try:
-            return not self[word].final
-        except (KeyError, IndexError):
+            self[word]
+        except KeyError:
             return False
+        return True
 
     def insert(self, word, data=None):
         if self.key_reversed:
             word = list(reversed(word))
-        LOG.debug(f'Adding to Trie: {word} -> {data}')
         self._insert(word, data)
 
     def _insert(self, word, data=None):
@@ -114,9 +107,6 @@ class Trie(object):
             print(remain, self.children)
             return self.children[remain[0]]._getitem(remain)
         return self
-
-    def _get(self, word, insert=False):
-        pass
 
 if __name__ == '__main__':
     from IPython import embed
