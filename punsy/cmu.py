@@ -5,7 +5,7 @@ import os, sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 from punsy import log
-from punsy.structs.trie import Trie
+from punsy.structs.trie import Trie, SuffixTrie
 
 import tqdm
 
@@ -65,8 +65,10 @@ if __name__ == '__main__':
     rh = cmu.phonemes[ph]
     print(rh.value, rh.data)
 
-    print('rhymes beginning with "ing"')
-    ph = cmu.mapping['ING']
-    rh = cmu.phonemes[ph]
+    print('rhymes ending with "ing"')
+    print(cmu.phonemes.value, cmu.phonemes.value, cmu.phonemes.children.keys())
+    rh = cmu.phonemes['ING']
     print('ING', ph, rh.data)
     print(collect_rhymes(rh))
+
+    print(SuffixTrie.collect_child_data(cmu.phonemes['ING'], 11))

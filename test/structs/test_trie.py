@@ -8,17 +8,6 @@ from punsy.structs.trie import Trie
 
 class TestTrie(unittest.TestCase):
 
-    def setUp(self):
-        self.words = {
-            'NONE': ['N', 'AH1', 'N'],
-            'NAAN': ['N', 'AH1', 'N'],
-            'ONCE': ['W', 'AH1', 'N', 'S'],
-            'PUN':  ['P', 'AH1', 'N'],
-        }
-        self.trie = Trie()
-        for word, pronunciation in self.words.items():
-            self.trie.insert(pronunciation, word)
-
     def test_insert_suffixes(self):
         words = [
             'cat',
@@ -26,12 +15,11 @@ class TestTrie(unittest.TestCase):
             'catinthehat',
             'rat',
         ]
-        struct = Trie(key_reversed=True)
+        trie = Trie(key_reversed=True)
         for word in words:
-            struct.insert(word)
+            trie.insert(word)
 
-
-        result = struct['at']
+        result = trie['at']
         self.assertEqual(set('a'), result.value)
         self.assertEqual(['c', 'b', 'h', 'r'], list(result.children.keys()))
         # cat, bat & rat are all 'final'
@@ -40,12 +28,21 @@ class TestTrie(unittest.TestCase):
         self.assertTrue(result.children['r'].final)
         # h should contain 'catinthehat'
         self.assertFalse(result.children['h'].final)
-        self.assertTrue(struct['catinthehat'].final)
+        self.assertTrue(trie['catinthehat'].final)
 
     def testInsert(self):
-        self.assertEqual({'NONE', 'NAAN'}, self.trie['N', 'AH1', 'N'].data)
-        self.assertEqual({'ONCE'}, self.trie['W', 'AH1', 'N', 'S'].data)
-        self.assertEqual({'PUN'}, self.trie['P', 'AH1', 'N'].data)
+        trie = Trie()
+        words = {
+            'NONE': ['N', 'AH1', 'N'],
+            'NAAN': ['N', 'AH1', 'N'],
+            'ONCE': ['W', 'AH1', 'N', 'S'],
+            'PUN':  ['P', 'AH1', 'N'],
+        }
+        for word, pronunciation in words.items():
+            trie.insert(pronunciation, word)
+        self.assertEqual({'NONE', 'NAAN'}, trie['N', 'AH1', 'N'].data)
+        self.assertEqual({'ONCE'}, trie['W', 'AH1', 'N', 'S'].data)
+        self.assertEqual({'PUN'}, trie['P', 'AH1', 'N'].data)
 
     def testGetItem(self):
         trie = Trie()
