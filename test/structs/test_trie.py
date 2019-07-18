@@ -31,7 +31,7 @@ class TestTrie(unittest.TestCase):
         self.assertTrue(trie['catinthehat'].final)
 
     def testInsert(self):
-        trie = Trie()
+        trie = Trie(key_reversed=True)
         words = {
             'NONE': ['N', 'AH1', 'N'],
             'NAAN': ['N', 'AH1', 'N'],
@@ -40,12 +40,12 @@ class TestTrie(unittest.TestCase):
         }
         for word, pronunciation in words.items():
             trie.insert(pronunciation, word)
-        self.assertEqual({'NONE', 'NAAN'}, trie['N', 'AH1', 'N'].data)
+        self.assertEqual({'NONE', 'NAAN'}, trie['N', 'AH1', 'N'].data, trie['N', 'AH1', 'N'].data - {'NONE', 'NAAN'})
         self.assertEqual({'ONCE'}, trie['W', 'AH1', 'N', 'S'].data)
         self.assertEqual({'PUN'}, trie['P', 'AH1', 'N'].data)
 
     def testGetItem(self):
-        trie = Trie()
+        trie = Trie(key_reversed=True)
         trie.insert('A', 123)
         self.assertEqual({123}, trie['A'].data)
         self.assertTrue('A' in trie['A'].value)
