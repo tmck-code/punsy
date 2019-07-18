@@ -35,6 +35,11 @@ t,              print(t)          # print the contents of the trie
 '''
 from functools import wraps
 
+from functools import wraps
+
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 from punsy import log
 
 LOG = log.get_logger('trie')

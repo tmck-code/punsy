@@ -10,4 +10,10 @@ Here were my initial thoughts on the problem
 * Wowser, there are a lot of different ways make punsy.
   - ergo, we should start with the easiest pun and work from there.
 
+### The Suffix trie
 
+You can experiment with the suffix trie by running it directly with
+
+```
+./punsy/structs/trie.py
+```
