@@ -36,6 +36,9 @@ class CMU:
                 LOG.info(line)
                 raise e
 
+    def pronunciation(self, word):
+        return self.mapping[word.upper()]
+
     @staticmethod
     def __count_lines(fpath):
         i = 0

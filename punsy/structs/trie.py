@@ -61,11 +61,8 @@ def reversible(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if args[0].key_reversed:
-            new_arg = list(reversed(args[1]))
-            if len(args) == 3:
-                return f(args[0], new_arg, args[2])
-            else:
-                return f(args[0], new_arg)
+            args = list(args)
+            args[1] = list(reversed(args[1]))
         return f(*args, **kwargs)
     return wrapper
 

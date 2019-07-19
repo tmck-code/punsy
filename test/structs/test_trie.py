@@ -37,12 +37,15 @@ class TestTrie(unittest.TestCase):
             'NAAN': ['N', 'AH1', 'N'],
             'ONCE': ['W', 'AH1', 'N', 'S'],
             'PUN':  ['P', 'AH1', 'N'],
+            'ANSWER': ['AH1', 'N', 'S', 'ER'],
         }
         for word, pronunciation in words.items():
             trie.insert(pronunciation, word)
-        self.assertEqual({'NONE', 'NAAN'}, trie['N', 'AH1', 'N'].data, trie['N', 'AH1', 'N'].data - {'NONE', 'NAAN'})
-        self.assertEqual({'ONCE'}, trie['W', 'AH1', 'N', 'S'].data)
-        self.assertEqual({'PUN'}, trie['P', 'AH1', 'N'].data)
+        self.assertEqual({'NONE', 'NAAN'}, trie[['N', 'AH1', 'N']].data, trie['N', 'AH1', 'N'].data - {'NONE', 'NAAN'})
+        self.assertEqual({'ONCE'}, trie[['W', 'AH1', 'N', 'S']].data)
+        self.assertEqual({'PUN'}, trie[['P', 'AH1', 'N']].data)
+        self.assertEqual({'ANSWER'}, trie[['AH1', 'N', 'S', 'ER']].data)
+        self.assertEqual({'NONE', 'NONE', 'PUN'}, trie[['N']].data, trie)
 
     def testGetItem(self):
         trie = Trie(key_reversed=True)
