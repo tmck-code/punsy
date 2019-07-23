@@ -27,6 +27,16 @@ class CMU:
                     self.mapping[word] = phonemes
                     pbar.update(1)
 
+    def pronunciation(self, word):
+        return self.mapping[word]
+
+    def rhymes_for(self, suffix, max_depth=10):
+        pron = self.mapping[suffix]
+        LOG.info(f'Pronunciation is {pron}')
+        ph = self.phonemes[pron]
+        LOG.info(f'Rhymes for {ph}')
+        return SuffixTrie.collect_child_data(ph, results=[])
+
     @staticmethod
     def parse(istream):
         for i, line in enumerate(istream):

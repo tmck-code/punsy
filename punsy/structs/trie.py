@@ -45,22 +45,21 @@ LOG = log.get_logger('trie')
 class SuffixTrie:
 
     @staticmethod
-    def collect_child_data(node, max_depth=10, results=[]):
+    def collect_child_data(node, max_depth=10, results=list()):
+        if node.final:
+            results.extend(node.data)
         for key, child in node.children.items():
             if max_depth > 0:
-                SuffixTrie.collect_child_data(child, max_depth-1)
-        results.extend(node.data)
+                SuffixTrie.collect_child_data(child, max_depth-1, results)
         return results
 
 def reversible(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if args[0].key_reversed:
-            new_arg = list(reversed(args[1]))
-            if len(args) == 3:
-                return f(args[0], new_arg, args[2])
-            else:
-                return f(args[0], new_arg)
+            args = list(args)
+            args[1] = list(reversed(args[1]))
+            return f(*args)
         return f(*args, **kwargs)
     return wrapper
 
