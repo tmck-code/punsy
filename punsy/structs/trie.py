@@ -45,14 +45,11 @@ LOG = log.get_logger('trie')
 class SuffixTrie:
 
     @staticmethod
-    def collect_child_data(node, max_depth=10):
-        results = set()
-        LOG.info(f'at node: {node.value}, {node.data}, final: {node.final} - max depth: {max_depth}')
-        results |= node.data
+    def collect_child_data(node, max_depth=10, results=[]):
         for key, child in node.children.items():
             if max_depth > 0:
-                LOG.info(f'recursing into {key}, {child} with max_depth {max_depth}')
-                return SuffixTrie.collect_child_data(child, max_depth-1)
+                SuffixTrie.collect_child_data(child, max_depth-1)
+        results.extend(node.data)
         return results
 
 def reversible(f):
