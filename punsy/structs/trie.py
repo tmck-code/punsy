@@ -48,11 +48,10 @@ class SuffixTrie:
     def collect_child_data(node, max_depth=10):
         results = set()
         LOG.info(f'at node: {node.value}, {node.data}, final: {node.final} - max depth: {max_depth}')
+        results |= node.data
         for key, child in node.children.items():
             if max_depth > 0:
                 LOG.info(f'recursing into {key}, {child} with max_depth {max_depth}')
-                print(child.data)
-                results |= child.data
                 return SuffixTrie.collect_child_data(child, max_depth-1)
         return results
 
@@ -74,11 +73,13 @@ class Trie(object):
     Currently with ZERO dependencies.
     '''
 
-    def __init__(self, value=None, data='', key_reversed=False):
+    def __init__(self, value=None, data=None, key_reversed=False):
         self.value = value
         self.children = dict()
         self.final = False
-        self.data = set(data)
+        self.data = list()
+        if data:
+            self.data.extend((data,))
         self.key_reversed = key_reversed
 
     def has_suffix(self, word):
@@ -100,22 +101,22 @@ class Trie(object):
             current.value = letter
         current.final = True
         if data:
-            current.data = set(data)
+            current.data.extend((data,))
 
     @reversible
     def __getitem__(self, word):
-        curr, *remain = word
-
-        if curr not in self.children.keys():
-            raise KeyError
-        elif remain:
-            return self.children[curr].__getitem__(remain)
-        return self
+        current = self
+        for i, letter in enumerate(word):
+            try:
+                current = current.children[letter]
+            except KeyError:
+                print(f'word "{word}" not found')
+        return current
 
     def asdict(self):
         d = {}
-        for k in ['value', 'final', 'data']:
-            if self.__dict__[k]:
+        for k in ['data', 'value', 'final']:
+            if k in self.__dict__:
                 d[k] = self.__dict__[k]
         if self.children:
             d['children'] = {k: v.asdict() for k, v in self.children.items()}
