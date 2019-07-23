@@ -33,12 +33,11 @@ t.insert('cat', 'feline')         # insert a word and associated metadata into t
 t['cat'],       t.get('cat')      # retrieve a node from the trie
 t,              print(t)          # print the contents of the trie
 '''
-from functools import wraps
-
-from functools import wraps
 
 import os, sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+from functools import wraps
 
 from punsy import log
 
@@ -78,13 +77,6 @@ class Trie(object):
         self.final = False
         self.data = set(data)
         self.key_reversed = key_reversed
-
-    def has_suffix(self, word):
-        try:
-            self[word]
-        except KeyError:
-            return False
-        return True
 
     @reversible
     def insert(self, word, data=None):
