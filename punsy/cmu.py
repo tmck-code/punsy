@@ -68,8 +68,7 @@ def poc(cmu_client, sentence, offset):
     parts = sentence.split(' ')
     rhymes = cmu_client.rhymes_for(parts[-1].upper(), offset=offset)
     parts[-1] = random.choice(rhymes)
-    punified = ' '.join(parts)
-    return f'Punified! "{sentence}" -> "{punified}"'
+    return ' '.join(parts)
 
 if __name__ == '__main__':
     cmu = CMU(sys.argv[1])
