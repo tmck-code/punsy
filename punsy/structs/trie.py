@@ -37,14 +37,13 @@ class Trie(object):
     A Trie class which implements insert, contains and get methods.
     '''
 
-    def __init__(self, value=None, data=None, key_reversed=False):
+    def __init__(self, value=None, data=None):
         self.value = value
         self.children = dict()
         self.final = False
         self.data = list()
         if data:
             self.data.extend((data,))
-        self.key_reversed = key_reversed
 
     def insert(self, word, data=None):
         'Insert a word into the trie, with optional data attached'
