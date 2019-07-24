@@ -33,7 +33,7 @@ class TestTrie(unittest.TestCase):
         }
         for word, pronunciation in words.items():
             trie.insert(pronunciation, word)
-        self.assertEqual(['NONE', 'NAAN'], trie[['N', 'AH1', 'N']].data, trie)
+        self.assertEqual(['NONE', 'NAAN'], trie[['N', 'AH1', 'N']].data)
         self.assertEqual(['ONCE'], trie['W', 'AH1', 'N', 'S'].data)
         self.assertEqual(['PUN'], trie['P', 'AH1', 'N'].data)
 
@@ -56,6 +56,26 @@ class TestTrie(unittest.TestCase):
     def test_get_item(self):
         trie = SuffixTrie()
         trie.insert('A', 123)
+        # Assert A is stored correctly
         self.assertEqual([123], trie['A'].data)
-        self.assertTrue('A' in trie['A'].value)
+        self.assertEqual('A', trie['A'].value)
+
+        # Insert a child
+        trie.insert('AB', 321)
+        # Assert A is preserved
+        self.assertEqual([123], trie['A'].data)
+        self.assertEqual('A', trie['A'].value)
+        self.assertTrue(trie['A'].final)
+        # Assert AB is stored correctly
+        self.assertTrue('A' in trie['B'].children)
+        self.assertEqual([321], trie['AB'].data)
+        self.assertTrue(trie['AB'].final)
+
+        # Insert a child of -AB: CAB
+        trie.insert('CAB', 101)
+        # Assert that reverse order is correct
+        self.assertEqual(['A', 'B'], list(trie.trie.children.keys()))
+        self.assertEqual([101], trie['CAB'].data)
+        self.assertEqual('C', trie['CAB'].value)
+        self.assertTrue(trie['CAB'].final)
 
