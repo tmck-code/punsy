@@ -14,13 +14,13 @@ Here were my initial thoughts on the problem
 
 > The POC takes in a sentence, picks out the last word, finds a random rhyming match and inserts it in place.
 
-You can download and clean the CMU files using
+You build the docker image and run the POC with
 
 ```bash
-make fetch
+make poc
 ```
 
-Then, you can use the `punsy/cmu.py` command with the following format:
+Or, if you wish, use `make shell` to build the image and enter a BASH shell. Then, you can use the `punsy/cmu.py` command with the following format:
 
 ```text
 ./punsy/cmu.py <cmu_file_path> <sentence> <offset>
@@ -51,3 +51,4 @@ OR, the regular trie with
 ```bash
 ./punsy/structs/trie.py
 ```
+
