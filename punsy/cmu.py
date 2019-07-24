@@ -30,9 +30,10 @@ class CMU:
     def pronunciation(self, word):
         return self.mapping[word]
 
-    def rhymes_for(self, suffix, offset=0, max_depth=10):
+    def rhymes_for(self, suffix, offset=3, max_depth=10):
         pron = self.mapping[suffix]
         LOG.info(f'Pronunciation is {pron}')
+        LOG.info(f'Fetching rhymes, applying offset={offset}: {pron[offset:]}')
         ph = self.phonemes.rhymes_for_suffix(
             pron,
             offset=offset,
@@ -67,11 +68,12 @@ if __name__ == '__main__':
     cmu.run()
 
     import random
-    sentence = 'I searched for God but found none'
+    sentence = sys.argv[2] # 'I think this is rather funny'
+    offset = int(sys.argv[3])
 
     parts = sentence.split(' ')
-    rhymes = cmu.rhymes_for(parts[-1].upper())
+    rhymes = cmu.rhymes_for(parts[-1].upper(), offset=offset)
     parts[-1] = random.choice(rhymes)
     punified = ' '.join(parts)
 
-    print(punified)
+    LOG.info(f'Punified! "{sentence}" -> "{punified}"')
