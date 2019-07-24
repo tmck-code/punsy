@@ -52,3 +52,11 @@ OR, the regular trie with
 ./punsy/structs/trie.py
 ```
 
+### Hall of Fame
+
+As time passes, this will hopefully fill with some legitimately funny examples! Until then, we have these :)
+
+| command | output |
+|---------|--------|
+| cmu.poc(c, 'Adventure Time', 1) | "Adventure PART-TIME" |
+| cmu.poc(c, 'A Good Day To Die Hard', 1) | "A Good Day To Die AVANT-GARDE" |

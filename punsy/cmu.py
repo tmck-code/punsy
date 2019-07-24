@@ -63,17 +63,20 @@ class CMU:
             else:
                 return i
 
+def poc(cmu_client, sentence, offset):
+    import random
+    parts = sentence.split(' ')
+    rhymes = cmu_client.rhymes_for(parts[-1].upper(), offset=offset)
+    parts[-1] = random.choice(rhymes)
+    punified = ' '.join(parts)
+    return f'Punified! "{sentence}" -> "{punified}"'
+
 if __name__ == '__main__':
     cmu = CMU(sys.argv[1])
     cmu.run()
 
-    import random
-    sentence = sys.argv[2] # 'I think this is rather funny'
-    offset = int(sys.argv[3])
-
-    parts = sentence.split(' ')
-    rhymes = cmu.rhymes_for(parts[-1].upper(), offset=offset)
-    parts[-1] = random.choice(rhymes)
-    punified = ' '.join(parts)
-
-    LOG.info(f'Punified! "{sentence}" -> "{punified}"')
+    LOG.info(poc(
+        cmu_client=cmu,
+        sentence=sys.argv[2],
+        offset=int(sys.argv[3])
+    ))
