@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-A python implementation of the Trie data structure, specialising in searching by suffix.
+A python implementation of the Trie data structure.
 
     https://en.wikipedia.org/wiki/Trie
 
@@ -14,14 +14,6 @@ e.g. to store the words `car`, `cat`, 'bar' and 'bat'
 /
 - c - a -|- r
        \- t
-
-This trie has the ability to store and search words in reverse
-
-e.g. to find words rhyming with '-at', the search is reversed to 'ta' and then
-the child nodes 'b' (bat) and 'c' (cat) are returned.
-
-t - a - b
-      \ c
 
 Usage:
 
@@ -37,85 +29,71 @@ t,              print(t)          # print the contents of the trie
 import os, sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from functools import wraps
-
 from punsy import log
 
 LOG = log.get_logger('trie')
 
-class SuffixTrie:
-
-    @staticmethod
-    def collect_child_data(node, max_depth=1):
-        results = set()
-        LOG.info(f'at node: {node.value}, {node.data}, final: {node.final} - max depth: {max_depth}')
-        for key, child in node.children.items():
-            if max_depth > 0:
-                LOG.info(f'recursing into {key}, {child} with max_depth {max_depth}')
-                results |= child.data
-                results |= SuffixTrie.collect_child_data(child, max_depth-1)
-        return results
-
-def reversible(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if args[0].key_reversed:
-            args = list(args)
-            args[1] = list(reversed(args[1]))
-        return f(*args, **kwargs)
-    return wrapper
-
 class Trie(object):
     '''
-    A Trie class which implements insert, contains, and has_prefix methods.
-    Currently with ZERO dependencies.
+    A Trie class which implements insert, contains and get methods.
     '''
 
-    def __init__(self, value='', data='', key_reversed=False):
-        self.value = set(value)
+    def __init__(self, value=None, data=None):
+        self.value = value
         self.children = dict()
         self.final = False
-        self.data = set(data)
-        self.key_reversed = key_reversed
+        self.data = list()
+        if data:
+            self.data.extend((data,))
 
-    @reversible
     def insert(self, word, data=None):
-        value, *string = word
-        self.value.add(value)
+        'Insert a word into the trie, with optional data attached'
+        current = self
+        for i, letter in enumerate(word):
+            try:
+                current = current.children[letter]
+            except KeyError:
+                current.children[letter] = Trie()
+                current = current.children[letter]
+            current.value = letter
+        current.final = True
+        if data:
+            current.data.extend((data,))
 
-        try:
-            # Recurse down
-            self.children[string[0]].insert(string, data)
-        except KeyError:
-            # Create a new node if one doesn't exist
-            n = Trie()
-            self.children[string[0]] = n
-            n.insert(string, data)
-        # We have reached the end of the word
-        except IndexError:
-            self.final = True
-            if data:
-                self.data.add(data)
+    def __getitem__(self, word):
+        'Retrieve a node (or branch) from the trie by key, otherwise raise KeyError'
+        current = self
+        for i, letter in enumerate(word):
+            try:
+                current = current.children[letter]
+            except KeyError:
+                raise KeyError(f'word "{word}" not found')
+        return current
+
+    def asdict(self):
+        'Return a representation of the node as a dict, for use with visualising using JSON'
+        d = {}
+        for k in ['data', 'value', 'final']:
+            if k in self.__dict__:
+                d[k] = self.__dict__[k]
+        if self.children:
+            d['children'] = {k: v.asdict() for k, v in self.children.items()}
+        return d
 
     def __repr__(self):
-        return f'{self.value} ({self.data}) -> {self.children}'
+        'Flat string representation of the node'
+        if self.value is None:
+            return f'(root) -> {self.children}'
+        else:
+            return f'{self.value} ({self.data}) -> {self.children}'
 
     def __contains__(self, value):
+        'Returns True if the trie contains the key as an entire word, otherwise returns False'
         try:
             return self[value].final
         except (KeyError, IndexError):
             return False
 
-    @reversible
-    def __getitem__(self, word):
-        curr, *remain = word
-
-        if curr not in self.value:
-            LOG.warn(f'{self.value}, {self.children.keys()}')
-            raise KeyError
-        if remain:
-            return self.children[remain[0]].__getitem__(remain)
-        return self
 
 if __name__ == '__main__':
     from IPython import embed
