@@ -42,27 +42,6 @@ from punsy import log
 
 LOG = log.get_logger('trie')
 
-class SuffixTrie:
-
-    @staticmethod
-    def collect_child_data(node, max_depth=10, results=list()):
-        if node.final:
-            results.extend(node.data)
-        for key, child in node.children.items():
-            if max_depth > 0:
-                SuffixTrie.collect_child_data(child, max_depth-1, results)
-        return results
-
-def reversible(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if args[0].key_reversed:
-            args = list(args)
-            args[1] = list(reversed(args[1]))
-            return f(*args)
-        return f(*args, **kwargs)
-    return wrapper
-
 class Trie(object):
     '''
     A Trie class which implements insert, contains, and has_prefix methods.
@@ -78,14 +57,6 @@ class Trie(object):
             self.data.extend((data,))
         self.key_reversed = key_reversed
 
-    def has_suffix(self, word):
-        try:
-            self[word]
-        except KeyError:
-            return False
-        return True
-
-    @reversible
     def insert(self, word, data=None):
         current = self
         for i, letter in enumerate(word):
@@ -99,14 +70,13 @@ class Trie(object):
         if data:
             current.data.extend((data,))
 
-    @reversible
     def __getitem__(self, word):
         current = self
         for i, letter in enumerate(word):
             try:
                 current = current.children[letter]
             except KeyError:
-                print(f'word "{word}" not found')
+                raise KeyError(f'word "{word}" not found')
         return current
 
     def asdict(self):
