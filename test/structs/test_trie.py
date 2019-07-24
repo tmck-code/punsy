@@ -4,7 +4,8 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
-from punsy.structs.trie import Trie, SuffixTrie
+from punsy.structs.trie import Trie
+from punsy.structs.suffix_trie import SuffixTrie
 
 class TestTrie(unittest.TestCase):
 
@@ -38,7 +39,7 @@ class TestTrie(unittest.TestCase):
 
 
     def test_search_suffix(self):
-        trie = Trie(key_reversed=True)
+        trie = SuffixTrie()
         words = {
             'NONE': ['N', 'AH1', 'N'],
             'NAAN': ['N', 'AH1', 'N'],
@@ -49,11 +50,11 @@ class TestTrie(unittest.TestCase):
             trie.insert(pronunciation, word)
         self.assertEqual(
             ['NONE', 'NAAN', 'PUN'],
-            SuffixTrie.collect_child_data(trie[['AH1', 'N']])
+            trie.rhymes_for_suffix(['AH1', 'N'])
         )
 
-    def testGetItem(self):
-        trie = Trie(key_reversed=True)
+    def test_get_item(self):
+        trie = SuffixTrie()
         trie.insert('A', 123)
         self.assertEqual([123], trie['A'].data)
         self.assertTrue('A' in trie['A'].value)
