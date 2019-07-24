@@ -1,17 +1,13 @@
-.PHONY: fetch build shell test
-
-fetch:
-	./ops/data.sh
-	./ops/normalise.py cmudict-0.7b
+.PHONY: build shell test poc
 
 build:
-	docker build -f ops/Dockerfile -t punsy .
+	docker build -f ops/Dockerfile -t punsy:latest .
 
 shell: build
 	docker run -it punsy:latest bash
 
 test: build
-	docker run -it -v $(shell pwd):/home/punsy punsy bash -c "python -m unittest"
+	docker run -it punsy:latest bash -c "python -m unittest"
 
-poc: fetch build
-	docker run -it -v $(shell pwd):/home/punsy punsy bash -c "./punsy/cmu.py cmudict-0.7b.utf8 'Napoleon Dynamite' 4"
+poc: build
+	docker run -it punsy:latest bash -c "./punsy/cmu.py /home/punsy/cmudict-0.7b.utf8 'Napoleon Dynamite' 4"
