@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-A python implementation of the Trie data structure, specialising in searching by suffix.
+A python implementation of the Trie data structure.
 
     https://en.wikipedia.org/wiki/Trie
 
@@ -15,14 +15,6 @@ e.g. to store the words `car`, `cat`, 'bar' and 'bat'
 - c - a -|- r
        \- t
 
-This trie has the ability to store and search words in reverse
-
-e.g. to find words rhyming with '-at', the search is reversed to 'ta' and then
-the child nodes 'b' (bat) and 'c' (cat) are returned.
-
-t - a - b
-      \ c
-
 Usage:
 
 t = Trie()  # create a trie
@@ -33,8 +25,6 @@ t.insert('cat', 'feline')         # insert a word and associated metadata into t
 t['cat'],       t.get('cat')      # retrieve a node from the trie
 t,              print(t)          # print the contents of the trie
 '''
-from functools import wraps
-
 import os, sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
@@ -44,8 +34,7 @@ LOG = log.get_logger('trie')
 
 class Trie(object):
     '''
-    A Trie class which implements insert, contains, and has_prefix methods.
-    Currently with ZERO dependencies.
+    A Trie class which implements insert, contains and get methods.
     '''
 
     def __init__(self, value=None, data=None, key_reversed=False):
@@ -58,6 +47,7 @@ class Trie(object):
         self.key_reversed = key_reversed
 
     def insert(self, word, data=None):
+        'Insert a word into the trie, with optional data attached'
         current = self
         for i, letter in enumerate(word):
             try:
@@ -71,6 +61,7 @@ class Trie(object):
             current.data.extend((data,))
 
     def __getitem__(self, word):
+        'Retrieve a node (or branch) from the trie by key, otherwise raise KeyError'
         current = self
         for i, letter in enumerate(word):
             try:
@@ -80,6 +71,7 @@ class Trie(object):
         return current
 
     def asdict(self):
+        'Return a representation of the node as a dict, for use with visualising using JSON'
         d = {}
         for k in ['data', 'value', 'final']:
             if k in self.__dict__:
@@ -89,12 +81,14 @@ class Trie(object):
         return d
 
     def __repr__(self):
+        'Flat string representation of the node'
         if self.value is None:
             return f'(root) -> {self.children}'
         else:
             return f'{self.value} ({self.data}) -> {self.children}'
 
     def __contains__(self, value):
+        'Returns True if the trie contains the key as an entire word, otherwise returns False'
         try:
             return self[value].final
         except (KeyError, IndexError):
