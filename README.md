@@ -1,4 +1,5 @@
 # punsy
+
 A rhyming pun generator for Python
 
 ## Initial POC
@@ -50,6 +51,6 @@ As time passes, this will hopefully fill with some legitimately funny examples! 
 
 | command | output |
 |---------|--------|
-| cmu.poc(c, 'Adventure Time', 1) | "Adventure PART-TIME" |
-| cmu.poc(c, 'A Good Day To Die Hard', 1) | "A Good Day To Die AVANT-GARDE" |
-| cmu.poc(c, 'The Rolling Stones', 2) | "The Rolling CLONES" |
+| 'Adventure Time' | "Adventure PART-TIME" |
+| 'A Good Day To Die Hard' | "A Good Day To Die AVANT-GARDE" |
+| 'The Rolling Stones' | "The Rolling CLONES" |
