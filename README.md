@@ -31,6 +31,35 @@ An example run:
 2019-07-24 15:07:38,576 punsy.punsy INFO Napoleon VEGEMITE
 ```
 
+#### Running interactively
+
+* Enter the docker container with
+
+```bash
+make build shell
+```
+
+Then, launch the `ipython` command and use as follows:
+
+```python
+root@fbcb68a6ce93:/home/punsy# ipython
+
+Python 3.7.3 (default, May  8 2019, 05:31:59)
+Type 'copyright', 'credits' or 'license' for more information
+IPython 7.6.1 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from punsy import cmu
+
+In [2]: poc = cmu.POC('cmudict-0.7b.utf8')
+125700it [00:03, 37833.83it/s]
+
+In [3]: poc.poc('NAPOLEON DYNAMITE', offset=2)
+2019-08-01 22:58:11,368 punsy.punsy INFO Pronunciation is ['D', 'AY1', 'N', 'AH0', 'M', 'AY2', 'T']
+2019-08-01 22:58:11,369 punsy.punsy INFO Fetching rhymes, applying offset=2: ['N', 'AH0', 'M', 'AY2', 'T']
+2019-08-01 22:58:11,369 punsy.punsy INFO Rhymes for ['DYNAMITE']
+Out[4]: 'NAPOLEON DYNAMITE'
+```
+
 ### The Suffix trie
 
 You can experiment with the suffix trie by running it directly with
