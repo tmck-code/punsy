@@ -26,7 +26,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'punsy = punsy.cmu.run',
+            'punsy = punsy.cmu:poc',
         ],
     },
     install_requires=[

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys
+from argparse import ArgumentParser
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
@@ -76,10 +77,23 @@ class POC:
         ))
         return ' '.join(parts)
 
-if __name__ == '__main__':
+def poc():
+    # create the top-level parser
+    parser = ArgumentParser(prog='punsy')
+
+    # create the parser for the "connect" command
+    parser.add_argument('--cmu-file', type=str, default='cmudict-0.7b.utf8', help='The path of the cmu rhyming dictionary')
+    parser.add_argument('--sentence', type=str, required=True, help='The sentence to punnify')
+    parser.add_argument('--offset', type=int, default=2, help='How many syllables to match')
+    parser.add_argument('--max-depth', type=int, default=10, help='The maximum length of a matched rhyming word')
+    args = parser.parse_args()
+
     LOG.info(
-        POC(sys.argv[1]).poc(
-            sentence=sys.argv[2],
-            offset=int(sys.argv[3])
+        POC(args.cmu_file).poc(
+            sentence=args.sentence,
+            offset=args.offset
         )
     )
+
+if __name__ == '__main__':
+    poc()
