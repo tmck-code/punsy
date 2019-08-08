@@ -60,8 +60,8 @@ Then, launch the `ipython` command and use as follows (output omitted):
 
 ```python
 In [1]: from punsy import cmu
-In [2]: poc = cmu.POC('cmudict-0.7b.utf8')
-In [3]: poc.poc('NAPOLEON DYNAMITE', offset=2)
+In [2]: poc = cmu.POC()
+In [3]: poc.run('NAPOLEON DYNAMITE', offset=2)
 ```
 
 ### The Suffix trie
