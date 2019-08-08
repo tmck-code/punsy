@@ -7,28 +7,35 @@ A rhyming pun generator for Python
 > The POC takes in a sentence, picks out the last word, finds a random rhyming match and inserts it in place.
 > E.g. `"Napoleon Dynamite" -> "Napoleon VEGEMITE"`
 
-You build the docker image and run the POC with
-
-```bash
-make poc
+To install, run:
+```
+pip install punsy
 ```
 
-Or, if you wish, use `make shell` to build the image and enter a BASH shell. Then, you can use the `punsy/cmu.py` command with the following format:
-
-```text
-./punsy/cmu.py <cmu_file_path> <sentence> <offset>
+You can then run punsy with:
+```
+punsy --sentence 'napoleon dynamite'
 ```
 
 An example run:
 
-```text
-./punsy/cmu.py cmudict-0.7b.utf8 'Napoleon Dynamite' 4
+```
+ 20:10:22 │ ☯ ~ punsy --sentence 'napoleon dynamite'
+2019-08-09 00:55:24,851 punsy.punsy INFO Parsing & loading 125699 entries from CMU dictionary file
+125700it [00:02, 58591.59it/s]
+2019-08-09 00:55:27,005 punsy.punsy INFO Pronunciation of "DYNAMITE" is "D-AY1-N-AH0-M-AY2-T"
+2019-08-09 00:55:27,005 punsy.punsy INFO Fetching rhymes, applying offset=2: "N-AH0-M-AY2-T"
+2019-08-09 00:55:27,005 punsy.punsy INFO Rhymes for DYNAMITE: ['DYNAMITE']
+2019-08-09 00:55:27,005 punsy.punsy INFO Generated pun for napoleon dynamite: napoleon DYNAMITE (DYNAMITE -> DYNAMITE)
+2019-08-09 00:55:27,181 punsy.punsy INFO napoleon DYNAMITE
+```
 
-125700it [00:02, 56726.98it/s]
-2019-07-24 15:07:38,575 punsy.punsy INFO Pronunciation is ['D', 'AY1', 'N', 'AH0', 'M', 'AY2', 'T']
-2019-07-24 15:07:38,575 punsy.punsy INFO Fetching rhymes, applying offset=4: ['M', 'AY2', 'T']
-2019-07-24 15:07:38,575 punsy.punsy INFO Rhymes for ['DOLOMITE', 'DYNAMITE', 'EPSOMITE', 'HASHEMITE', 'VEGEMITE']
-2019-07-24 15:07:38,576 punsy.punsy INFO Napoleon VEGEMITE
+### Docker
+
+You build the docker image and run the POC with
+
+```bash
+make poc
 ```
 
 #### Running interactively
@@ -39,25 +46,22 @@ An example run:
 make build shell
 ```
 
-Then, launch the `ipython` command and use as follows:
+Option 1: 
+
+You can use the `punsy/cmu.py` command with the following format:
+
+```text
+./punsy/cmu.py <cmu_file_path> <sentence> <offset>
+```
+
+Option 2: ipython
+
+Then, launch the `ipython` command and use as follows (output omitted):
 
 ```python
-root@fbcb68a6ce93:/home/punsy# ipython
-
-Python 3.7.3 (default, May  8 2019, 05:31:59)
-Type 'copyright', 'credits' or 'license' for more information
-IPython 7.6.1 -- An enhanced Interactive Python. Type '?' for help.
-
 In [1]: from punsy import cmu
-
 In [2]: poc = cmu.POC('cmudict-0.7b.utf8')
-125700it [00:03, 37833.83it/s]
-
 In [3]: poc.poc('NAPOLEON DYNAMITE', offset=2)
-2019-08-01 22:58:11,368 punsy.punsy INFO Pronunciation is ['D', 'AY1', 'N', 'AH0', 'M', 'AY2', 'T']
-2019-08-01 22:58:11,369 punsy.punsy INFO Fetching rhymes, applying offset=2: ['N', 'AH0', 'M', 'AY2', 'T']
-2019-08-01 22:58:11,369 punsy.punsy INFO Rhymes for ['DYNAMITE']
-Out[4]: 'NAPOLEON DYNAMITE'
 ```
 
 ### The Suffix trie
