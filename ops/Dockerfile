@@ -9,11 +9,9 @@ RUN apt-get update && \
     pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-RUN curl -O http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b
+ADD ops/normalise.py .
+RUN mkdir -p punsy/data && \
+    curl -O http://svn.code.sf.net/p/cmusphinx/code/trunk/cmudict/cmudict-0.7b && \
+    ./normalise.py cmudict-0.7b punsy/data/cmudict-0.7b.utf8
 
 ADD . .
-RUN ./ops/normalise.py cmudict-0.7b
-RUN python -m pip install --upgrade pip setuptools wheel
-RUN ./setup.py sdist bdist_wheel
-RUN ./setup.py install
-

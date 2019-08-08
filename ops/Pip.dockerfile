@@ -1,7 +1,9 @@
-FROM python:3.7.3-slim-stretch
+FROM punsy:latest
 
 WORKDIR /home/punsy
 
-RUN python -m pip install --upgrade pip setuptools wheel
+RUN python -m pip install --upgrade pip setuptools wheel twine
 
 ADD . .
+
+RUN ./setup.py sdist bdist_wheel && ./setup.py install
