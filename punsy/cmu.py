@@ -2,6 +2,8 @@
 
 import os, sys
 from argparse import ArgumentParser
+from pkg_resources import resource_string
+import json
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
@@ -17,79 +19,82 @@ class CMU:
         self.fpath = cmu_fpath
         self.phonemes = SuffixTrie()
         self.mapping = {}
-        self.n_lines = CMU.__count_lines(self.fpath)
+        self.n_lines = CMU.count_lines(self.fpath)
 
     def run(self):
-        with open(self.fpath, 'rb') as istream:
-            with tqdm.tqdm(total=self.n_lines) as pbar:
-                for i, word, phonemes in CMU.parse(istream):
-                    phonemes = phonemes.split(' ')
-                    self.phonemes.insert(phonemes, word)
-                    self.mapping[word] = phonemes
-                    pbar.update(1)
-
-    def pronunciation(self, word):
-        return self.mapping[word]
+        LOG.info(f'Parsing & loading {self.n_lines} entries from CMU dictionary file')
+        with tqdm.tqdm(total=self.n_lines) as pbar:
+            for word, phonemes in CMU.parse(self.fpath):
+                phonemes = phonemes.split(' ')
+                self.phonemes.insert(phonemes, word)
+                self.mapping[word] = phonemes
+                pbar.update(1)
 
     def rhymes_for(self, suffix, offset=3, max_depth=10):
         pron = self.mapping[suffix]
-        LOG.info(f'Pronunciation is {pron}')
-        LOG.info(f'Fetching rhymes, applying offset={offset}: {pron[offset:]}')
-        ph = self.phonemes.rhymes_for_suffix(
+        LOG.info(f'Pronunciation of "{suffix}" is "{"-".join(pron)}"')
+        LOG.info(f'Fetching rhymes, applying offset={offset}: "{"-".join(pron[offset:])}"')
+        rhymes = self.phonemes.rhymes_for_suffix(
             pron,
             offset=offset,
             max_depth=10
         )
-        LOG.info(f'Rhymes for {ph}')
-        return ph
+        LOG.info(f'Rhymes for {suffix}: {rhymes}')
+        return rhymes
 
     @staticmethod
-    def parse(istream):
-        for i, line in enumerate(istream):
-            try:
-                yield [i, *line.decode('utf8').strip().split('|')]
-            except UnicodeDecodeError as e:
-                LOG.info(line)
-                raise e
-
-    def pronunciation(self, word):
-        return self.mapping[word.upper()]
+    def parse(fpath='', delimiter='|'):
+        for line in CMU.__iter_file(fpath):
+            yield line.strip().split(delimiter)
 
     @staticmethod
-    def __count_lines(fpath):
-        i = 0
-        with open(fpath) as istream:
-            for i, _ in enumerate(istream):
-                pass
-            else:
-                return i
+    def count_lines(fpath=''):
+        for i, _ in enumerate(CMU.__iter_file(fpath)):
+            pass
+        else:
+            return i
+
+    @staticmethod
+    def __iter_file(fpath=''):
+        if fpath:
+            with open(fpath, 'r') as istream:
+                yield from istream
+        else:
+            for line in resource_string('punsy', 'cmudict-0.7b.utf8').decode().split('\n'):
+                if line:
+                    yield line
+
 
 class POC:
     def __init__(self, cmu_fpath):
         self.cmu = CMU(cmu_fpath)
         self.cmu.run()
 
-    def poc(self, sentence, offset=1, max_depth=10):
+    def run(self, sentence, offset=1, max_depth=10):
         import random
         parts = sentence.split(' ')
-        parts[-1] = random.choice(self.cmu.rhymes_for(
-            parts[-1].upper(), offset=offset, max_depth=max_depth
+        word = parts[-1].upper()
+        rhyme = random.choice(self.cmu.rhymes_for(
+            word, offset=offset, max_depth=max_depth
         ))
-        return ' '.join(parts)
+        parts[-1] = rhyme
+        result = ' '.join(parts)
+        LOG.info(f'Generated pun for {sentence}: {result} ({word} -> {rhyme})')
+
+        return result
+
 
 def poc():
-    # create the top-level parser
     parser = ArgumentParser(prog='punsy')
 
-    # create the parser for the "connect" command
-    parser.add_argument('--cmu-file', type=str, default='cmudict-0.7b.utf8', help='The path of the cmu rhyming dictionary')
     parser.add_argument('--sentence', type=str, required=True, help='The sentence to punnify')
-    parser.add_argument('--offset', type=int, default=2, help='How many syllables to match')
+    parser.add_argument('--cmu-file', type=str, help='(optional) the path of the cmu rhyming dictionary')
+    parser.add_argument('--offset', type=int, default=2, help='The number of syllables to match')
     parser.add_argument('--max-depth', type=int, default=10, help='The maximum length of a matched rhyming word')
     args = parser.parse_args()
 
     LOG.info(
-        POC(args.cmu_file).poc(
+        POC(args.cmu_file).run(
             sentence=args.sentence,
             offset=args.offset
         )
