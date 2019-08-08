@@ -10,7 +10,7 @@ def readme():
 
 setuptools.setup(
     name='punsy',
-    version='0.0.1',
+    version='0.0.3',
     author='Tom McKeesick',
     author_email='tmck01@gmail.com',
     description='A rhyming pun generator.',
@@ -19,7 +19,7 @@ setuptools.setup(
     url='https://github.com/tmck-code/punsy',
     packages=setuptools.find_packages(),
     package_data={
-        'punsy': ['cmu.dict']
+        'punsy': ['cmudict-0.7b.utf8']
     },
     classifiers=[
         'Programming Language :: Python :: 3',
