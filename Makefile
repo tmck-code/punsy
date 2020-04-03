@@ -19,7 +19,7 @@ deploy/build:
 
 poc: build deploy/build
 	docker run -it $(IMAGE):$(TAG) bash -c \
-		"punsy --sentence 'Napoleon Dynamite' --offset 4"
+		"punsy --sentence 'Napoleon Dynamite' --offset 4 -v"
 
 deploy/test: build deploy/build
 	docker run -it $(IMAGE):$(TAG) bash -c \
