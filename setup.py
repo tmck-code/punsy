@@ -2,6 +2,7 @@
 'The Punsy pip package'
 
 import setuptools
+from punsy.cmu import DICTIONARY_FPATH
 
 def readme():
     'Return README.md as a string'
@@ -19,7 +20,7 @@ setuptools.setup(
     url='https://github.com/tmck-code/punsy',
     packages=setuptools.find_packages(),
     package_data={
-        'punsy': ['cmudict-0.7b.utf8']
+        'punsy': [DICTIONARY_FPATH]
     },
     classifiers=[
         'Programming Language :: Python :: 3',

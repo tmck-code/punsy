@@ -13,6 +13,7 @@ from punsy.structs.suffix_trie import SuffixTrie
 import tqdm
 
 LOG = log.get_logger('punsy')
+DICTIONARY_FPATH = 'data/cmudict-0.7b.utf8'
 
 class CMU:
     def __init__(self, cmu_fpath):
@@ -60,7 +61,7 @@ class CMU:
             with open(fpath, 'r') as istream:
                 yield from istream
         else:
-            for line in resource_string('punsy', 'cmudict-0.7b.utf8').decode().split('\n'):
+            for line in resource_string('punsy', DICTIONARY_FPATH).decode().split('\n'):
                 if line:
                     yield line
 

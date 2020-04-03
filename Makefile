@@ -14,18 +14,20 @@ shell: build
 test: build
 	docker run -it $(IMAGE) bash -c "python -m unittest"
 
-poc: build
-	docker run -it $(IMAGE) bash -c \
+dist-build:
+	docker tag $(IMAGE) $(REPOSITORY):latest
+	docker build -f ops/Pip.dockerfile -t $(NAMESPACE)/$(REPOSITORY):deploy .
+
+poc: build dist-build
+	docker run -it $(NAMESPACE)/$(REPOSITORY):deploy bash -c \
 		"punsy --sentence 'Napoleon Dynamite' --offset 4"
 
-dist-test: build
-	docker build -f ops/Pip.dockerfile -t $(NAMESPACE)/$(REPOSITORY):deploy .
+dist-test: build dist-build
 	docker run -it $(NAMESPACE)/$(REPOSITORY):deploy bash -c \
 		"punsy --sentence 'napoleon dynamite' && \
 		python -m twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*"
 
-dist-prod: build
-	docker build -f ops/Pip.dockerfile -t $(NAMESPACE)/$(REPOSITORY):deploy .
+dist-prod: build dist-build
 	docker run -it $(NAMESPACE)/$(REPOSITORY):deploy bash -c \
 		"punsy --sentence 'napoleon dynamite' && \
 		python -m twine upload --skip-existing dist/*"
