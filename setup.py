@@ -11,7 +11,7 @@ def readme():
 
 setuptools.setup(
     name='punsy',
-    version='0.0.3',
+    version='0.0.4',
     author='Tom McKeesick',
     author_email='tmck01@gmail.com',
     description='A rhyming pun generator.',
