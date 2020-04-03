@@ -1,4 +1,4 @@
-FROM punsy:latest
+FROM tmck-code/punsy:base
 
 WORKDIR /home/punsy
 

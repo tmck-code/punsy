@@ -3,10 +3,9 @@
 NAMESPACE ?= tmck-code
 REPOSITORY ?= punsy
 TAG ?= $(shell git log -1 --format=%h)
-IMAGE ?= $(NAMESPACE)/$(REPOSITORY):$(TAG)
+IMAGE ?= $(NAMESPACE)/$(REPOSITORY)
 
 build:
-	docker build -f ops/Dockerfile -t $(IMAGE) .
 
 shell: build
 	docker run -it $(IMAGE) bash
@@ -14,20 +13,20 @@ shell: build
 test: build
 	docker run -it $(IMAGE) bash -c "python -m unittest"
 
-dist-build:
-	docker tag $(IMAGE) $(REPOSITORY):latest
-	docker build -f ops/Pip.dockerfile -t $(NAMESPACE)/$(REPOSITORY):deploy .
+deploy/build:
+	docker build -f ops/Dockerfile -t $(IMAGE):base .
+	docker build -f ops/Pip.dockerfile -t $(IMAGE):$(TAG) .
 
-poc: build dist-build
-	docker run -it $(NAMESPACE)/$(REPOSITORY):deploy bash -c \
+poc: build deploy/build
+	docker run -it $(IMAGE):$(TAG) bash -c \
 		"punsy --sentence 'Napoleon Dynamite' --offset 4"
 
-dist-test: build dist-build
-	docker run -it $(NAMESPACE)/$(REPOSITORY):deploy bash -c \
+deploy/test: build deploy/build
+	docker run -it $(IMAGE):$(TAG) bash -c \
 		"punsy --sentence 'napoleon dynamite' && \
 		python -m twine upload --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*"
 
-dist-prod: build dist-build
-	docker run -it $(NAMESPACE)/$(REPOSITORY):deploy bash -c \
+deploy/prod: build deploy/build
+	docker run -it $(IMAGE):$(TAG) bash -c \
 		"punsy --sentence 'napoleon dynamite' && \
 		python -m twine upload --skip-existing dist/*"
