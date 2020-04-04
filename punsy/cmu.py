@@ -8,8 +8,6 @@ import logging
 
 from punsy.structs.suffix_trie import SuffixTrie
 
-import tqdm
-
 DICTIONARY_FPATH = 'data/cmudict-0.7b.utf8'
 
 class CMU:
@@ -21,12 +19,10 @@ class CMU:
 
     def run(self):
         logging.debug(f'Parsing & loading {self.n_lines} entries from CMU dictionary file')
-        with tqdm.tqdm(total=self.n_lines) as pbar:
-            for word, phonemes in CMU.parse(self.fpath):
-                phonemes = phonemes.split(' ')
-                self.phonemes.insert(phonemes, word)
-                self.mapping[word] = phonemes
-                pbar.update(1)
+        for word, phonemes in CMU.parse(self.fpath):
+            phonemes = phonemes.split(' ')
+            self.phonemes.insert(phonemes, word)
+            self.mapping[word] = phonemes
 
     def rhymes_for(self, suffix, offset=3, max_depth=10):
         pron = self.mapping[suffix]
@@ -76,10 +72,7 @@ class POC:
             word, offset=offset, max_depth=max_depth
         ))
         parts[-1] = rhyme
-        result = ' '.join(parts)
-        logging.debug(f'Generated pun for {sentence}: {result} ({word} -> {rhyme})')
-
-        return result
+        return ' '.join(parts)
 
 
 def poc():
@@ -102,7 +95,8 @@ def poc():
         sentence=args.sentence,
         offset=args.offset
     )
-    logging.info(result)
+
+    logging.info(f'Generated pun: "{args.sentence}" => "{result}"')
 
 if __name__ == '__main__':
     poc()

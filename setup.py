@@ -30,7 +30,5 @@ setuptools.setup(
             'punsy = punsy.cmu:poc',
         ],
     },
-    install_requires=[
-        'tqdm'
-    ]
+    install_requires=[]
 )
