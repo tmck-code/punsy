@@ -2,6 +2,7 @@
 'The Punsy pip package'
 
 import setuptools
+from punsy.cmu import DICTIONARY_FPATH
 
 def readme():
     'Return README.md as a string'
@@ -10,7 +11,7 @@ def readme():
 
 setuptools.setup(
     name='punsy',
-    version='0.0.3',
+    version='0.0.4',
     author='Tom McKeesick',
     author_email='tmck01@gmail.com',
     description='A rhyming pun generator.',
@@ -19,7 +20,7 @@ setuptools.setup(
     url='https://github.com/tmck-code/punsy',
     packages=setuptools.find_packages(),
     package_data={
-        'punsy': ['cmudict-0.7b.utf8']
+        'punsy': [DICTIONARY_FPATH]
     },
     classifiers=[
         'Programming Language :: Python :: 3',
@@ -29,7 +30,5 @@ setuptools.setup(
             'punsy = punsy.cmu:poc',
         ],
     },
-    install_requires=[
-        'tqdm'
-    ]
+    install_requires=[]
 )

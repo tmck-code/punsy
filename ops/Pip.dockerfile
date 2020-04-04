@@ -1,8 +1,8 @@
-FROM punsy:latest
+FROM tmck-code/punsy:base
 
 WORKDIR /home/punsy
 
-RUN python -m pip install --upgrade pip setuptools wheel twine
+RUN python -m pip install --no-cache-dir setuptools wheel twine
 
 ADD . .
 
